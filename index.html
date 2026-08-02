@@ -6,8 +6,19 @@
 <title>Bhagavad Gita — Daily Verses</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script>
+  // Resolve and apply theme before first paint to avoid a flash of the wrong theme.
+  (function(){
+    var stored = localStorage.getItem('bg_theme') || 'auto';
+    var resolved = stored === 'auto'
+      ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : stored;
+    document.documentElement.setAttribute('data-theme', resolved);
+  })();
+</script>
 <style>
   :root{
+    color-scheme: light dark;
     --maroon:#7a1f2b;
     --saffron:#d98a2b;
     --saffron-light:#fbeedd;
@@ -15,6 +26,33 @@
     --ink:#3a2b23;
     --muted:#8a7568;
     --line:#ecdcc6;
+    --card-bg:#ffffff;
+    --shadow:rgba(122,31,43,.06);
+    --shadow-strong:rgba(122,31,43,.12);
+    --header-grad-1:#7a1f2b;
+    --header-grad-2:#5c1420;
+    --header-text:#fdf3e7;
+    --header-sub:#e8c9a8;
+    --overlay-bg:rgba(58,43,35,.55);
+    --btn-hover-text:#ffffff;
+  }
+  :root[data-theme="dark"]{
+    --maroon:#e2a479;
+    --saffron:#f0aa4f;
+    --saffron-light:#3a2a12;
+    --cream:#181310;
+    --ink:#f1e6d8;
+    --muted:#b7a190;
+    --line:#3a2e24;
+    --card-bg:#241d17;
+    --shadow:rgba(0,0,0,.35);
+    --shadow-strong:rgba(0,0,0,.5);
+    --header-grad-1:#3a0f16;
+    --header-grad-2:#1c0a0d;
+    --header-text:#f6e6d8;
+    --header-sub:#d9b28a;
+    --overlay-bg:rgba(0,0,0,.65);
+    --btn-hover-text:#241d17;
   }
   *{box-sizing:border-box;}
   body{
@@ -23,13 +61,15 @@
     background:var(--cream);
     color:var(--ink);
     line-height:1.6;
+    transition:background .2s ease, color .2s ease;
   }
   header{
-    background:linear-gradient(135deg,var(--maroon),#5c1420);
-    color:#fdf3e7;
+    background:linear-gradient(135deg,var(--header-grad-1),var(--header-grad-2));
+    color:var(--header-text);
     padding:22px 20px 20px;
     text-align:center;
     position:relative;
+    transition:background .2s ease;
   }
   header h1{
     margin:0 0 4px;
@@ -37,28 +77,33 @@
     letter-spacing:.02em;
   }
   header .om{font-size:1.7rem;display:block;margin-bottom:4px;opacity:.9;}
-  header p{margin:0;color:#e8c9a8;font-size:.92rem;}
+  header p{margin:0;color:var(--header-sub);font-size:.92rem;}
 
-  .lang-toggle{
-    display:flex;justify-content:center;gap:6px;margin-top:14px;
+  .toggle-row{
+    display:flex;justify-content:center;align-items:center;gap:16px;margin-top:14px;flex-wrap:wrap;
   }
-  .lang-pill{
+  .lang-toggle, .theme-toggle{
+    display:flex;justify-content:center;gap:6px;
+  }
+  .lang-pill, .theme-pill{
     font-family:inherit;font-size:.82rem;cursor:pointer;
     background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.35);
-    color:#fdf3e7;padding:5px 14px;border-radius:16px;transition:.15s;
+    color:var(--header-text);padding:5px 14px;border-radius:16px;transition:.15s;
   }
-  .lang-pill.active{background:var(--saffron);border-color:var(--saffron);color:#3a2004;font-weight:600;}
-  .lang-pill:hover:not(.active){background:rgba(255,255,255,.18);}
+  .lang-pill.active, .theme-pill.active{background:var(--saffron);border-color:var(--saffron);color:#3a2004;font-weight:600;}
+  .lang-pill:hover:not(.active), .theme-pill:hover:not(.active){background:rgba(255,255,255,.18);}
+  .toggle-divider{width:1px;height:18px;background:rgba(255,255,255,.25);}
 
   .wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px;}
 
   .progress-card{
-    background:#fff;
+    background:var(--card-bg);
     border:1px solid var(--line);
     border-radius:14px;
     padding:16px 18px;
     margin-bottom:22px;
-    box-shadow:0 2px 10px rgba(122,31,43,.06);
+    box-shadow:0 2px 10px var(--shadow);
+    transition:background .2s ease, border-color .2s ease;
   }
   .progress-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;}
   .progress-top .day-label{font-weight:600;color:var(--maroon);}
@@ -76,22 +121,23 @@
   .nav-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:8px;flex-wrap:wrap;}
   button{
     font-family:inherit;font-size:.9rem;cursor:pointer;
-    background:#fff;border:1px solid var(--maroon);color:var(--maroon);
+    background:var(--card-bg);border:1px solid var(--maroon);color:var(--maroon);
     padding:9px 16px;border-radius:20px;transition:.15s;
   }
-  button:hover:not(:disabled){background:var(--maroon);color:#fff;}
+  button:hover:not(:disabled){background:var(--maroon);color:var(--btn-hover-text);}
   button:disabled{opacity:.35;cursor:default;}
-  button.primary{background:var(--maroon);color:#fff;}
-  button.primary:hover{background:#5c1420;}
+  button.primary{background:var(--maroon);color:var(--btn-hover-text);}
+  button.primary:hover{filter:brightness(0.9);}
   .today-btn{font-size:.8rem;padding:6px 12px;}
 
   .verse-card{
-    background:#fff;
+    background:var(--card-bg);
     border:1px solid var(--line);
     border-radius:16px;
     padding:22px 22px 20px;
     margin-bottom:20px;
-    box-shadow:0 2px 12px rgba(122,31,43,.06);
+    box-shadow:0 2px 12px var(--shadow);
+    transition:background .2s ease, border-color .2s ease;
   }
   .verse-head{
     display:flex;justify-content:space-between;align-items:baseline;
@@ -131,7 +177,7 @@
   }
   .commentary.clamped::after{
     content:'';position:absolute;bottom:0;left:0;right:0;height:2.2em;
-    background:linear-gradient(transparent,#fff);
+    background:linear-gradient(transparent,var(--card-bg));
   }
   .more-link{
     display:inline-block;margin-top:6px;font-size:.82rem;color:var(--maroon);
@@ -149,7 +195,7 @@
   @keyframes spin{to{transform:rotate(360deg);}}
 
   .complete{
-    text-align:center;padding:50px 20px;background:#fff;border-radius:16px;
+    text-align:center;padding:50px 20px;background:var(--card-bg);border-radius:16px;
     border:1px solid var(--line);
   }
   .complete .om{font-size:2.4rem;color:var(--maroon);margin-bottom:10px;}
@@ -159,13 +205,13 @@
 
   /* first-visit language picker overlay */
   .overlay{
-    position:fixed;inset:0;background:rgba(58,43,35,.55);
+    position:fixed;inset:0;background:var(--overlay-bg);
     display:flex;align-items:center;justify-content:center;z-index:50;
     padding:20px;
   }
   .overlay-card{
-    background:#fffaf3;border-radius:18px;padding:34px 28px;max-width:380px;width:100%;
-    text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25);
+    background:var(--card-bg);border-radius:18px;padding:34px 28px;max-width:380px;width:100%;
+    text-align:center;box-shadow:0 12px 40px var(--shadow-strong);
   }
   .overlay-card .om{font-size:2rem;color:var(--maroon);margin-bottom:10px;display:block;}
   .overlay-card h2{margin:0 0 6px;color:var(--maroon);font-size:1.25rem;}
@@ -184,9 +230,17 @@
   <span class="om">ॐ</span>
   <h1 id="hTitle">Bhagavad Gita — Daily Verses</h1>
   <p id="hSubtitle">Lessons for the day</p>
-  <div class="lang-toggle">
-    <button class="lang-pill" id="pillEn">English</button>
-    <button class="lang-pill" id="pillHi">हिन्दी</button>
+  <div class="toggle-row">
+    <div class="lang-toggle">
+      <button class="lang-pill" id="pillEn">English</button>
+      <button class="lang-pill" id="pillHi">हिन्दी</button>
+    </div>
+    <div class="toggle-divider"></div>
+    <div class="theme-toggle">
+      <button class="theme-pill" id="pillThemeLight">☀ Light</button>
+      <button class="theme-pill" id="pillThemeDark">☾ Dark</button>
+      <button class="theme-pill" id="pillThemeAuto">Auto</button>
+    </div>
   </div>
 </header>
 
@@ -316,6 +370,32 @@ let viewDay = scheduledDay < 1 ? 1 : scheduledDay;
 // ---- language state ----
 const LANG_KEY = 'bg_lang';
 let lang = localStorage.getItem(LANG_KEY);
+
+// ---- theme state (light / dark / auto) ----
+const THEME_KEY = 'bg_theme';
+let themePref = localStorage.getItem(THEME_KEY) || 'auto';
+const darkMediaQuery = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+
+function resolveTheme(pref){
+  if(pref === 'auto') return darkMediaQuery && darkMediaQuery.matches ? 'dark' : 'light';
+  return pref;
+}
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme', resolveTheme(themePref));
+  document.getElementById('pillThemeLight').classList.toggle('active', themePref==='light');
+  document.getElementById('pillThemeDark').classList.toggle('active', themePref==='dark');
+  document.getElementById('pillThemeAuto').classList.toggle('active', themePref==='auto');
+}
+function setTheme(pref){
+  themePref = pref;
+  localStorage.setItem(THEME_KEY, pref);
+  applyTheme();
+}
+if(darkMediaQuery){
+  const onSystemThemeChange = ()=>{ if(themePref==='auto') applyTheme(); };
+  if(darkMediaQuery.addEventListener) darkMediaQuery.addEventListener('change', onSystemThemeChange);
+  else if(darkMediaQuery.addListener) darkMediaQuery.addListener(onSystemThemeChange); // older Safari
+}
 
 // ---- verse cache ----
 async function fetchVerse(chapter, verse){
@@ -532,6 +612,11 @@ document.getElementById('nextBtn').onclick = ()=>{ if(viewDay<scheduledDay){ vie
 document.getElementById('todayBtn').onclick = ()=>{ viewDay = scheduledDay; renderDay(); };
 document.getElementById('pillEn').onclick = ()=> setLang('en');
 document.getElementById('pillHi').onclick = ()=> setLang('hi');
+document.getElementById('pillThemeLight').onclick = ()=> setTheme('light');
+document.getElementById('pillThemeDark').onclick = ()=> setTheme('dark');
+document.getElementById('pillThemeAuto').onclick = ()=> setTheme('auto');
+
+applyTheme();
 
 if(!lang){
   lang = 'en'; // sensible default while overlay is shown
