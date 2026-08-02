@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bhagavad Gita — Daily Verses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon:#7a1f2b;
+    --saffron:#d98a2b;
+    --saffron-light:#fbeedd;
+    --cream:#fffaf3;
+    --ink:#3a2b23;
+    --muted:#8a7568;
+    --line:#ecdcc6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Noto Serif', Georgia, serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.6;
+  }
+  header{
+    background:linear-gradient(135deg,var(--maroon),#5c1420);
+    color:#fdf3e7;
+    padding:22px 20px 20px;
+    text-align:center;
+    position:relative;
+  }
+  header h1{
+    margin:0 0 4px;
+    font-size:1.5rem;
+    letter-spacing:.02em;
+  }
+  header .om{font-size:1.7rem;display:block;margin-bottom:4px;opacity:.9;}
+  header p{margin:0;color:#e8c9a8;font-size:.92rem;}
+
+  .lang-toggle{
+    display:flex;justify-content:center;gap:6px;margin-top:14px;
+  }
+  .lang-pill{
+    font-family:inherit;font-size:.82rem;cursor:pointer;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.35);
+    color:#fdf3e7;padding:5px 14px;border-radius:16px;transition:.15s;
+  }
+  .lang-pill.active{background:var(--saffron);border-color:var(--saffron);color:#3a2004;font-weight:600;}
+  .lang-pill:hover:not(.active){background:rgba(255,255,255,.18);}
+
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px;}
+
+  .progress-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px 18px;
+    margin-bottom:22px;
+    box-shadow:0 2px 10px rgba(122,31,43,.06);
+  }
+  .progress-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;}
+  .progress-top .day-label{font-weight:600;color:var(--maroon);}
+  .progress-top .pct{font-size:.85rem;color:var(--muted);}
+  .bar-track{background:var(--saffron-light);border-radius:8px;height:10px;margin:10px 0 8px;overflow:hidden;}
+  .bar-fill{background:linear-gradient(90deg,var(--saffron),#c96a1f);height:100%;border-radius:8px;transition:width .4s ease;}
+  .chapter-strip{display:flex;gap:3px;flex-wrap:wrap;margin-top:10px;}
+  .chapter-dot{
+    flex:1 1 auto;min-width:14px;height:8px;border-radius:3px;background:var(--line);
+    position:relative;
+  }
+  .chapter-dot.done{background:var(--saffron);}
+  .chapter-dot.current{background:var(--maroon);}
+
+  .nav-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:8px;flex-wrap:wrap;}
+  button{
+    font-family:inherit;font-size:.9rem;cursor:pointer;
+    background:#fff;border:1px solid var(--maroon);color:var(--maroon);
+    padding:9px 16px;border-radius:20px;transition:.15s;
+  }
+  button:hover:not(:disabled){background:var(--maroon);color:#fff;}
+  button:disabled{opacity:.35;cursor:default;}
+  button.primary{background:var(--maroon);color:#fff;}
+  button.primary:hover{background:#5c1420;}
+  .today-btn{font-size:.8rem;padding:6px 12px;}
+
+  .verse-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:22px 22px 20px;
+    margin-bottom:20px;
+    box-shadow:0 2px 12px rgba(122,31,43,.06);
+  }
+  .verse-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px dashed var(--line);padding-bottom:10px;margin-bottom:14px;
+    gap:10px;flex-wrap:wrap;
+  }
+  .verse-head .chap{font-size:.78rem;color:var(--saffron);text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
+  .verse-head .vnum{font-size:.85rem;color:var(--muted);}
+
+  .sanskrit{
+    font-family:'Noto Serif Devanagari', serif;
+    font-size:1.25rem;
+    color:var(--maroon);
+    white-space:pre-line;
+    margin-bottom:10px;
+  }
+  .translit{
+    font-style:italic;color:var(--muted);font-size:.92rem;
+    white-space:pre-line;margin-bottom:16px;
+  }
+  .section-label{
+    font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--saffron);font-weight:600;margin:16px 0 6px;
+  }
+  .section-label .xlang{
+    text-transform:none;letter-spacing:0;color:var(--muted);font-weight:400;font-size:.9em;
+  }
+  .translation{font-size:1.02rem;}
+  .translation.hindi{font-family:'Noto Serif Devanagari',serif;font-size:1.08rem;}
+  .wordmeaning{font-size:.88rem;color:var(--ink);}
+  .wordmeaning .pair{display:inline;}
+  .wordmeaning .sk{font-family:'Noto Serif Devanagari',serif;color:var(--maroon);}
+  .commentary{font-size:.92rem;color:#54453b;}
+  .commentary.hindi{font-family:'Noto Serif Devanagari',serif;font-size:.98rem;}
+  .commentary.clamped{
+    max-height:6.6em;overflow:hidden;position:relative;
+  }
+  .commentary.clamped::after{
+    content:'';position:absolute;bottom:0;left:0;right:0;height:2.2em;
+    background:linear-gradient(transparent,#fff);
+  }
+  .more-link{
+    display:inline-block;margin-top:6px;font-size:.82rem;color:var(--maroon);
+    cursor:pointer;text-decoration:underline;
+  }
+  .author-tag{font-size:.75rem;color:var(--muted);margin-top:4px;font-style:italic;}
+
+  .state{text-align:center;padding:40px 10px;color:var(--muted);}
+  .state.error{color:#a33;}
+  .spinner{
+    width:26px;height:26px;border:3px solid var(--saffron-light);
+    border-top-color:var(--saffron);border-radius:50%;
+    animation:spin 0.8s linear infinite;margin:0 auto 14px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .complete{
+    text-align:center;padding:50px 20px;background:#fff;border-radius:16px;
+    border:1px solid var(--line);
+  }
+  .complete .om{font-size:2.4rem;color:var(--maroon);margin-bottom:10px;}
+
+  footer{text-align:center;padding:20px;color:var(--muted);font-size:.78rem;}
+  footer a{color:var(--maroon);}
+
+  /* first-visit language picker overlay */
+  .overlay{
+    position:fixed;inset:0;background:rgba(58,43,35,.55);
+    display:flex;align-items:center;justify-content:center;z-index:50;
+    padding:20px;
+  }
+  .overlay-card{
+    background:#fffaf3;border-radius:18px;padding:34px 28px;max-width:380px;width:100%;
+    text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25);
+  }
+  .overlay-card .om{font-size:2rem;color:var(--maroon);margin-bottom:10px;display:block;}
+  .overlay-card h2{margin:0 0 6px;color:var(--maroon);font-size:1.25rem;}
+  .overlay-card p{margin:0 0 20px;color:var(--muted);font-size:.9rem;}
+  .overlay-choices{display:flex;gap:12px;flex-direction:column;}
+  .overlay-choices button{
+    padding:12px 16px;font-size:1rem;border-radius:12px;
+  }
+</style>
+</head>
+<body>
+
+<div id="overlay"></div>
+
+<header>
+  <span class="om">ॐ</span>
+  <h1 id="hTitle">Bhagavad Gita — Daily Verses</h1>
+  <p id="hSubtitle">Lessons for the day</p>
+  <div class="lang-toggle">
+    <button class="lang-pill" id="pillEn">English</button>
+    <button class="lang-pill" id="pillHi">हिन्दी</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="progress-card" id="progressCard"></div>
+  <div class="nav-row">
+    <button id="prevBtn">← Previous day</button>
+    <button id="todayBtn" class="today-btn">Jump to today</button>
+    <button id="nextBtn">Next day →</button>
+  </div>
+  <div id="content"><div class="state"><div class="spinner"></div>Loading…</div></div>
+</div>
+
+<footer id="footerText">
+  Sanskrit text, transliteration, translations and commentary sourced live from the
+  <a href="https://vedicscriptures.github.io" target="_blank">vedicscriptures.github.io</a> open Bhagavad Gita API.
+</footer>
+
+<script>
+const CHAPTERS = [
+ {n:1, nameSkt:"अर्जुनविषादयोग", meaningEn:"Arjuna's Dilemma", meaningHi:"अर्जुन विषाद योग", verses:47},
+ {n:2, nameSkt:"सांख्ययोग", meaningEn:"Transcendental Knowledge", meaningHi:"गीता का सार", verses:72},
+ {n:3, nameSkt:"कर्मयोग", meaningEn:"Path of Selfless Service", meaningHi:"कर्मयोग", verses:43},
+ {n:4, nameSkt:"ज्ञानकर्मसंन्यासयोग", meaningEn:"Path of Knowledge & Action", meaningHi:"दिव्य ज्ञान", verses:42},
+ {n:5, nameSkt:"कर्मसंन्यासयोग", meaningEn:"Path of Renunciation", meaningHi:"कर्मयोग-कृष्णभावनाभावित कर्म", verses:29},
+ {n:6, nameSkt:"ध्यानयोग", meaningEn:"Path of Meditation", meaningHi:"ध्यानयोग", verses:47},
+ {n:7, nameSkt:"ज्ञानविज्ञानयोग", meaningEn:"Self-Knowledge & Enlightenment", meaningHi:"भगवद्ज्ञान", verses:30},
+ {n:8, nameSkt:"अक्षरब्रह्मयोग", meaningEn:"Path of the Eternal God", meaningHi:"भगवत्प्राप्ति", verses:28},
+ {n:9, nameSkt:"राजविद्याराजगुह्ययोग", meaningEn:"King of Sciences", meaningHi:"परम गुह्य ज्ञान", verses:34},
+ {n:10, nameSkt:"विभूतियोग", meaningEn:"Infinite Opulences of God", meaningHi:"श्री भगवान् का ऐश्वर्य", verses:42},
+ {n:11, nameSkt:"विश्वरूपदर्शनयोग", meaningEn:"The Cosmic Form", meaningHi:"विराट रूप", verses:55},
+ {n:12, nameSkt:"भक्तियोग", meaningEn:"The Yoga of Devotion", meaningHi:"भक्तियोग", verses:20},
+ {n:13, nameSkt:"क्षेत्र-क्षेत्रज्ञविभागयोग", meaningEn:"Field and Knower of the Field", meaningHi:"प्रकृति, पुरुष तथा चेतना", verses:35},
+ {n:14, nameSkt:"गुणत्रयविभागयोग", meaningEn:"Three Modes of Nature", meaningHi:"प्रकृति के तीन गुण", verses:27},
+ {n:15, nameSkt:"पुरुषोत्तमयोग", meaningEn:"The Supreme Divine Personality", meaningHi:"पुरुषोत्तम योग", verses:20},
+ {n:16, nameSkt:"दैवासुरसम्पद्विभागयोग", meaningEn:"Divine & Demoniac Natures", meaningHi:"दैवी तथा आसुरी स्वभाव", verses:24},
+ {n:17, nameSkt:"श्रद्धात्रयविभागयोग", meaningEn:"Three Divisions of Faith", meaningHi:"श्रद्धा के विभाग", verses:28},
+ {n:18, nameSkt:"मोक्षसंन्यासयोग", meaningEn:"Perfection of Renunciation", meaningHi:"उपसंहार-संन्यास की सिद्धि", verses:78},
+];
+const VERSES_PER_DAY = 3;
+const TOTAL_VERSES = CHAPTERS.reduce((s,c)=>s+c.verses,0);
+const TOTAL_DAYS = Math.ceil(TOTAL_VERSES / VERSES_PER_DAY);
+
+// ---- i18n strings ----
+const STRINGS = {
+  en: {
+    title: "Bhagavad Gita — Daily Verses",
+    subtitle: "Lessons for the day",
+    overlayTitle: "Choose your language",
+    overlaySub: "You can switch anytime from the header.",
+    overlayEn: "Continue in English",
+    overlayHi: "हिन्दी में जारी रखें",
+    dayOf: (d,t)=>`Day ${d} of ${t}`,
+    pct: p=>`${p}% through the Gita`,
+    prev: "← Previous day",
+    next: "Next day →",
+    today: "Jump to today",
+    translation: "Translation",
+    wordMeaning: "Word-by-word meaning",
+    commentary: "Commentary",
+    readMore: "Read more",
+    loading: "Loading today's verses…",
+    error: msg=>`Could not load today's verses (${msg}).`,
+    errorSub: "Check your internet connection and try again.",
+    retry: "Retry",
+    completedTitle: "You've completed the Bhagavad Gita",
+    completedSub: "All 18 chapters, verse by verse. सर्वं शुभं भवतु।",
+    restart: "Start again from Chapter 1",
+    footer: 'Sanskrit text, transliteration, translations and commentary sourced live from the <a href="https://vedicscriptures.github.io" target="_blank">vedicscriptures.github.io</a> open Bhagavad Gita API.',
+    chapterLabel: (n,name)=>`Ch ${n} · ${name}`,
+    verseLabel: n=>`Verse ${n}`,
+    inEnglish: "(shown in English)",
+  },
+  hi: {
+    title: "भगवद्गीता — दैनिक श्लोक",
+    subtitle: "आज के पाठ",
+    overlayTitle: "अपनी भाषा चुनें",
+    overlaySub: "आप इसे हेडर से कभी भी बदल सकते हैं।",
+    overlayEn: "Continue in English",
+    overlayHi: "हिन्दी में जारी रखें",
+    dayOf: (d,t)=>`दिन ${d} / ${t}`,
+    pct: p=>`गीता का ${p}% पूर्ण`,
+    prev: "← पिछला दिन",
+    next: "अगला दिन →",
+    today: "आज पर जाएँ",
+    translation: "अनुवाद",
+    wordMeaning: "शब्दार्थ",
+    commentary: "भावार्थ",
+    readMore: "और पढ़ें",
+    loading: "आज के श्लोक लोड हो रहे हैं…",
+    error: msg=>`आज के श्लोक लोड नहीं हो सके (${msg})।`,
+    errorSub: "अपना इंटरनेट कनेक्शन जांचें और पुनः प्रयास करें।",
+    retry: "पुनः प्रयास करें",
+    completedTitle: "आपने भगवद्गीता पूर्ण कर ली है",
+    completedSub: "सभी 18 अध्याय, श्लोक दर श्लोक। सर्वं शुभं भवतु।",
+    restart: "अध्याय 1 से पुनः आरम्भ करें",
+    footer: 'संस्कृत श्लोक, लिप्यंतरण, अनुवाद और भावार्थ <a href="https://vedicscriptures.github.io" target="_blank">vedicscriptures.github.io</a> के खुले भगवद्गीता एपीआई से लिए गए हैं।',
+    chapterLabel: (n,name)=>`अध्याय ${n} · ${name}`,
+    verseLabel: n=>`श्लोक ${n}`,
+    inEnglish: "(अंग्रेज़ी में उपलब्ध)",
+  }
+};
+
+// ---- flatten chapter/verse index ----
+const FLAT = [];
+CHAPTERS.forEach(c=>{
+  for(let v=1; v<=c.verses; v++) FLAT.push({chapter:c.n, verse:v});
+});
+
+// ---- start date persistence ----
+const START_KEY = 'bg_daily_start_date';
+let startDate = localStorage.getItem(START_KEY);
+if(!startDate){
+  startDate = new Date().toISOString().slice(0,10);
+  localStorage.setItem(START_KEY, startDate);
+}
+function daysSinceStart(){
+  const start = new Date(startDate + 'T00:00:00');
+  const today = new Date();
+  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const startMid = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  return Math.floor((todayMid - startMid) / 86400000);
+}
+const scheduledDay = Math.min(daysSinceStart() + 1, TOTAL_DAYS); // 1-indexed, capped
+let viewDay = scheduledDay < 1 ? 1 : scheduledDay;
+
+// ---- language state ----
+const LANG_KEY = 'bg_lang';
+let lang = localStorage.getItem(LANG_KEY);
+
+// ---- verse cache ----
+async function fetchVerse(chapter, verse){
+  const key = `bg_v_${chapter}_${verse}`;
+  const cached = localStorage.getItem(key);
+  if(cached){ try{ return JSON.parse(cached); }catch(e){} }
+  const res = await fetch(`https://vedicscriptures.github.io/slok/${chapter}/${verse}`);
+  if(!res.ok) throw new Error('Fetch failed: ' + res.status);
+  const data = await res.json();
+  try{ localStorage.setItem(key, JSON.stringify(data)); }catch(e){/* storage full, ignore */}
+  return data;
+}
+
+function cleanTranslation(text){
+  if(!text) return '';
+  return text.replace(/^\s*\d+\.\d+\s*/,'').trim();
+}
+function cleanHindi(text){
+  if(!text) return '';
+  return text.replace(/^[।\s]*\d+\.\d+[।\s]*/,'').trim();
+}
+
+function renderWordMeaning(ec){
+  if(!ec) return '';
+  let t = ec.replace(/^\s*\d+\.\d+\s*/,'');
+  const parts = t.split('?').map(p=>p.trim()).filter(Boolean);
+  const cleaned = parts.map(p=>p.replace(/Commentary[\s\S]*/,'').trim()).filter(Boolean);
+  return cleaned.map(p=>{
+    const m = p.match(/^(\S+)\s+(.*)$/);
+    if(!m) return `<span class="pair">${p}</span>`;
+    return `<span class="pair"><span class="sk">${m[1]}</span> — ${m[2]}</span>`;
+  }).join('; ');
+}
+
+function pickTranslation(v, l){
+  if(l === 'hi'){
+    const hiOrder = ['rams','tej'];
+    for(const k of hiOrder){
+      if(v[k] && v[k].ht) return {text: cleanHindi(v[k].ht), author: v[k].author, srcLang:'hi'};
+    }
+  }
+  const order = ['purohit','siva','adi','gambir','san'];
+  for(const k of order){
+    if(v[k] && v[k].et) return {text: cleanTranslation(v[k].et), author: v[k].author, srcLang:'en'};
+  }
+  return {text: l==='hi' ? 'इस श्लोक का अनुवाद उपलब्ध नहीं है।' : 'Translation unavailable for this verse.', author:'', srcLang:l};
+}
+
+function pickCommentary(v, l, usedAuthor){
+  if(l === 'hi'){
+    const hiOrder = ['rams','chinmay'];
+    for(const k of hiOrder){
+      if(v[k] && v[k].hc && v[k].author !== usedAuthor){
+        return {text: cleanHindi(v[k].hc), author: v[k].author, srcLang:'hi'};
+      }
+    }
+  }
+  const order = ['prabhu','gambir','adi','san','siva'];
+  for(const k of order){
+    if(v[k] && v[k].ec && v[k].author !== usedAuthor){
+      return {text: v[k].ec.replace(/^\s*\d+\.\d+\s*/,'').trim(), author: v[k].author, srcLang:'en'};
+    }
+  }
+  return null;
+}
+
+function verseCardHTML(v, idx){
+  const L = STRINGS[lang];
+  const chapterMeta = CHAPTERS.find(c=>c.n===v.chapter);
+  const chapterName = chapterMeta ? (lang==='hi' ? chapterMeta.meaningHi : chapterMeta.meaningEn) : '';
+  const translation = pickTranslation(v, lang);
+  const commentary = pickCommentary(v, lang, translation.author);
+  const wm = renderWordMeaning(v.siva ? v.siva.ec : null);
+  const commentaryId = `commentary-${idx}`;
+
+  const translationXlangNote = translation.srcLang !== lang ? ` <span class="xlang">${L.inEnglish}</span>` : '';
+  const commentaryXlangNote = commentary && commentary.srcLang !== lang ? ` <span class="xlang">${L.inEnglish}</span>` : '';
+
+  return `
+  <div class="verse-card">
+    <div class="verse-head">
+      <span class="chap">${L.chapterLabel(v.chapter, chapterName)}</span>
+      <span class="vnum">${L.verseLabel(v.verse)}</span>
+    </div>
+    <div class="sanskrit">${(v.slok||'').trim()}</div>
+    <div class="translit">${(v.transliteration||'').trim()}</div>
+
+    <div class="section-label">${L.translation}${translationXlangNote}</div>
+    <div class="translation${translation.srcLang==='hi' ? ' hindi' : ''}">${translation.text}</div>
+    ${translation.author ? `<div class="author-tag">— ${translation.author}</div>` : ''}
+
+    ${wm ? `<div class="section-label">${L.wordMeaning}</div><div class="wordmeaning">${wm}</div>` : ''}
+
+    ${commentary ? `
+    <div class="section-label">${L.commentary}${commentaryXlangNote}</div>
+    <div class="commentary clamped${commentary.srcLang==='hi' ? ' hindi' : ''}" id="${commentaryId}">${commentary.text}</div>
+    <span class="more-link" onclick="document.getElementById('${commentaryId}').classList.remove('clamped'); this.style.display='none';">${L.readMore}</span>
+    ${commentary.author ? `<div class="author-tag">— ${commentary.author}</div>` : ''}
+    ` : ''}
+  </div>`;
+}
+
+function renderProgress(){
+  const L = STRINGS[lang];
+  const versesDoneThroughViewDay = Math.min(viewDay * VERSES_PER_DAY, TOTAL_VERSES);
+  const pct = Math.round((versesDoneThroughViewDay / TOTAL_VERSES) * 100);
+  const flatIdx = Math.min((viewDay-1)*VERSES_PER_DAY, TOTAL_VERSES-1);
+  const currentChapter = FLAT[flatIdx] ? FLAT[flatIdx].chapter : 18;
+
+  let dots = '';
+  CHAPTERS.forEach(c=>{
+    let cls = 'chapter-dot';
+    if(c.n < currentChapter) cls += ' done';
+    else if(c.n === currentChapter) cls += ' current';
+    const title = lang==='hi' ? `अध्याय ${c.n}: ${c.meaningHi}` : `Ch ${c.n}: ${c.meaningEn}`;
+    dots += `<div class="${cls}" title="${title}"></div>`;
+  });
+
+  const dateLabel = new Date(new Date(startDate+'T00:00:00').getTime() + (viewDay-1)*86400000)
+    .toLocaleDateString(lang==='hi' ? 'hi-IN' : undefined, {weekday:'short', month:'short', day:'numeric'});
+
+  document.getElementById('progressCard').innerHTML = `
+    <div class="progress-top">
+      <span class="day-label">${L.dayOf(viewDay, TOTAL_DAYS)} · ${dateLabel}</span>
+      <span class="pct">${L.pct(pct)}</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+    <div class="chapter-strip">${dots}</div>
+  `;
+}
+
+function applyStaticStrings(){
+  const L = STRINGS[lang];
+  document.documentElement.lang = lang;
+  document.title = L.title;
+  document.getElementById('hTitle').textContent = L.title;
+  document.getElementById('hSubtitle').textContent = L.subtitle;
+  document.getElementById('prevBtn').textContent = L.prev;
+  document.getElementById('nextBtn').textContent = L.next;
+  document.getElementById('todayBtn').textContent = L.today;
+  document.getElementById('footerText').innerHTML = L.footer;
+  document.getElementById('pillEn').classList.toggle('active', lang==='en');
+  document.getElementById('pillHi').classList.toggle('active', lang==='hi');
+}
+
+async function renderDay(){
+  const L = STRINGS[lang];
+  renderProgress();
+  document.getElementById('prevBtn').disabled = viewDay <= 1;
+  document.getElementById('nextBtn').disabled = viewDay >= scheduledDay;
+
+  const content = document.getElementById('content');
+  content.innerHTML = `<div class="state"><div class="spinner"></div>${L.loading}</div>`;
+
+  const startIdx = (viewDay-1) * VERSES_PER_DAY;
+  const todays = FLAT.slice(startIdx, startIdx + VERSES_PER_DAY);
+
+  if(todays.length === 0){
+    content.innerHTML = `
+    <div class="complete">
+      <div class="om">ॐ</div>
+      <h2>${L.completedTitle}</h2>
+      <p>${L.completedSub}</p>
+      <button class="primary" id="restartBtn">${L.restart}</button>
+    </div>`;
+    document.getElementById('restartBtn').onclick = ()=>{
+      localStorage.setItem(START_KEY, new Date().toISOString().slice(0,10));
+      location.reload();
+    };
+    return;
+  }
+
+  try{
+    const results = await Promise.all(todays.map(t=>fetchVerse(t.chapter, t.verse)));
+    content.innerHTML = results.map((v,i)=>verseCardHTML(v,i)).join('');
+  }catch(err){
+    content.innerHTML = `
+    <div class="state error">
+      ${L.error(err.message)}<br>
+      ${L.errorSub}
+      <div style="margin-top:14px;"><button id="retryBtn">${L.retry}</button></div>
+    </div>`;
+    document.getElementById('retryBtn').onclick = renderDay;
+  }
+}
+
+function setLang(l){
+  lang = l;
+  localStorage.setItem(LANG_KEY, l);
+  applyStaticStrings();
+  renderDay();
+}
+
+function showLanguageOverlay(){
+  const L = STRINGS.en; // overlay itself shown bilingually regardless of prior choice
+  document.getElementById('overlay').innerHTML = `
+    <div class="overlay">
+      <div class="overlay-card">
+        <span class="om">ॐ</span>
+        <h2>Choose your language / अपनी भाषा चुनें</h2>
+        <p>You can switch anytime from the header. / आप इसे हेडर से कभी भी बदल सकते हैं।</p>
+        <div class="overlay-choices">
+          <button class="primary" id="overlayEn">Continue in English</button>
+          <button class="primary" id="overlayHi">हिन्दी में जारी रखें</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('overlayEn').onclick = ()=>{ document.getElementById('overlay').innerHTML=''; setLang('en'); };
+  document.getElementById('overlayHi').onclick = ()=>{ document.getElementById('overlay').innerHTML=''; setLang('hi'); };
+}
+
+document.getElementById('prevBtn').onclick = ()=>{ if(viewDay>1){ viewDay--; renderDay(); } };
+document.getElementById('nextBtn').onclick = ()=>{ if(viewDay<scheduledDay){ viewDay++; renderDay(); } };
+document.getElementById('todayBtn').onclick = ()=>{ viewDay = scheduledDay; renderDay(); };
+document.getElementById('pillEn').onclick = ()=> setLang('en');
+document.getElementById('pillHi').onclick = ()=> setLang('hi');
+
+if(!lang){
+  lang = 'en'; // sensible default while overlay is shown
+  applyStaticStrings();
+  showLanguageOverlay();
+} else {
+  applyStaticStrings();
+  renderDay();
+}
+</script>
+</body>
+</html>
